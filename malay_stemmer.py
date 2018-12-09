@@ -161,7 +161,7 @@ def stem_prefix(word):
                     yield word[4:], word[:4]
 
                 # s undelete for legal bigrams
-                if word[4] in string.lowercase.replace('s', ''):
+                if word[4] in string.ascii_lowercase.replace('s', ''):
                     yield 's' + word[4:], word[:4]
 
             # root init: a e i o u g h k ==> prefix: peng
@@ -172,7 +172,7 @@ def stem_prefix(word):
                     yield word[4:], word[:4]
 
                 # k undelete for legal bigrams
-                if word[4] in string.lowercase.replace('k', ''):
+                if word[4] in string.ascii_lowercase.replace('k', ''):
                     yield 'k' + word[4:], word[:4]
 
             # root init: b f v p ==> prefix: pem
@@ -183,7 +183,7 @@ def stem_prefix(word):
                     yield word[3:], word[:3]
 
                 # p undelete for legal bigrams
-                if word[3] in string.lowercase.replace('p', ''):
+                if word[3] in string.ascii_lowercase.replace('p', ''):
                     yield 'p' + word[3:], word[:3]
 
             # root init: c d j t ==> prefix: pen
@@ -194,7 +194,7 @@ def stem_prefix(word):
                     yield word[3:], word[:3]
 
                 # t undelete for legal bigrams
-                if word[3] in string.lowercase.replace('t', ''):
+                if word[3] in string.ascii_lowercase.replace('t', ''):
                     yield 't' + word[3:], word[:3]
 
             # root init: l m n q r w x y z ==> prefix: pe
@@ -217,7 +217,7 @@ def stem_prefix(word):
                 yield word[len(prefix):], prefix
 
                 # r undelete for legal bigrams
-                if word[len(prefix)] in string.lowercase.replace('r', ''):
+                if word[len(prefix)] in string.ascii_lowercase.replace('r', ''):
                     yield 'r' + word[len(prefix):], prefix
 
         # other prefixes
@@ -275,7 +275,7 @@ def stem(word, recursive=False):
                     # only the second word is affixed
                     elif not prefix_1 and not suffix_1:
                         yield root_2, prefix_2, suffix_2
-    elif all(char in string.lowercase for char in word.lower()):
+    elif all(char in string.ascii_lowercase for char in word.lower()):
         for word_prefix_pair in stem_prefix(word):
             for root, prefix, suffix in stem_suffix(*word_prefix_pair):
                 # recursive call
@@ -287,33 +287,28 @@ def stem(word, recursive=False):
                 elif root and root[:2] not in illegal_starting_bigrams and root[-2:] not in illegal_ending_bigrams:
                     yield root, prefix, suffix
                     pass
+    else:
+        print('I expect all lowercase with at most one dash!')
 
 
 if __name__ == '__main__':
-    # for word in ['menggelisahi', 'rim', 'meredup', 'dibeli', 'gerugut', 'momake', 'mengaram', 'merawati', 'tambahan',
-    #       'spora', 'gol', 'kegiliran', 'cermat', 'adun', 'kehematan', 'mencetekkan', 'komen', 'aorta', 'usia',
-    #       'menggandakan', 'berbadai', 'tilikan', 'langsai', 'gapai', 'membran', 'hornblend', 'pemotong',
-    #       'kelian', 'pengiring', 'ijuk', 'melucutkan', 'seraha', 'psikedelik', 'berwajah', 'sungkum',
-    #       'kegayatan', 'songkok', 'menggeritik', 'ketewasan', 'gin', 'khatam', 'membau', 'menempel', 'pejoratif',
-    #       'pergedel', 'menggagau', 'memuncungkan', 'menghempaskan', 'menggilaskan', 'menghablur', 'dusin',
-    #       'mengingati', 'murai', 'pirau', 'perkilangan', 'tamtama', 'tetumbuhan', 'keasistenan', 'ditadbir',
-    #       'surau', 'gajus', 'mencita-citakan', 'disember', 'berkeley']:
-    #     print '', word, '-->', set(stem(word, recursive=True))
+    for word in ['menggelisahi', 'rim', 'meredup', 'dibeli', 'gerugut', 'momake', 'mengaram', 'merawati', 'tambahan',
+                 'spora', 'gol', 'kegiliran', 'cermat', 'adun', 'kehematan', 'mencetekkan', 'komen', 'aorta', 'usia',
+                 'menggandakan', 'berbadai', 'tilikan', 'langsai', 'gapai', 'membran', 'hornblend', 'pemotong',
+                 'kelian', 'pengiring', 'ijuk', 'melucutkan', 'seraha', 'psikedelik', 'berwajah', 'sungkum',
+                 'kegayatan', 'songkok', 'menggeritik', 'ketewasan', 'gin', 'khatam', 'membau', 'menempel', 'pejoratif',
+                 'pergedel', 'menggagau', 'memuncungkan', 'menghempaskan', 'menggilaskan', 'menghablur', 'dusin',
+                 'mengingati', 'murai', 'pirau', 'perkilangan', 'tamtama', 'tetumbuhan', 'keasistenan', 'ditadbir',
+                 'surau', 'gajus', 'mencita-citakan', 'disember', 'berkeley']:
+        print('', word, '-->', set(stem(word, recursive=True)))
 
     while 1:
-        search_query = raw_input('WORD TO STEM:\n')
+        search_query = input('WORD TO STEM:\n')
         if not search_query:
             break
         results = sorted(set(stem(search_query)), key=lambda x: len(x[0]))
-        print 'found %d items' % len(results)
-        print '', search_query, '-->', results
+        print('found %d items' % len(results))
+        print('', search_query, '-->', results)
         results = sorted(set(stem(search_query, recursive=True)), key=lambda x: len(x[0]))
-        print 'found %d items (recursive)' % len(results)
-        print '', search_query, '-->', results
-
-    # words=list(open('untranslated words.txt'))
-    # with open('stemmed.txt','w') as f:
-    #     for word in words:
-    #         word = word.strip()
-    #         roots = [root for root, prefix,suffix in stem(word) if root != word]
-    #         print >> f, ' ; '.join(roots)
+        print('found %d items (recursive)' % len(results))
+        print('', search_query, '-->', results)
